@@ -1,0 +1,38 @@
+# Weekly Stats Curator Environment Configuration
+# Copy this file to .env and fill in your actual API credentials
+
+# Reddit API Configuration
+# Get these from: https://www.reddit.com/prefs/apps
+REDDIT_CLIENT_ID=your_reddit_client_id_here
+REDDIT_CLIENT_SECRET=your_reddit_client_secret_here
+REDDIT_USERNAME=your_reddit_username
+REDDIT_PASSWORD=your_reddit_password
+REDDIT_USER_AGENT=WeeklyStatsCurator/1.0
+
+# LinkedIn API Configuration
+# Get these from: https://www.linkedin.com/developers/apps
+LINKEDIN_ACCESS_TOKEN=your_linkedin_access_token_here
+LINKEDIN_ORGANIZATION_ID=your_linkedin_organization_id_here
+
+# X (Twitter) API Configuration
+# Get these from: https://developer.twitter.com/en/portal/dashboard
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token_here
+TWITTER_API_KEY=your_twitter_api_key_here
+TWITTER_API_SECRET=your_twitter_api_secret_here
+TWITTER_ACCESS_TOKEN=your_twitter_access_token_here
+TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret_here
+TWITTER_USERNAME=your_twitter_username
+
+# YouTube API Configuration
+# Get API key from: https://console.developers.google.com/
+YOUTUBE_API_KEY=your_youtube_api_key_here
+YOUTUBE_CHANNEL_ID=your_youtube_channel_id_here
+
+# Google Search Console Configuration
+# Download credentials JSON file from: https://console.developers.google.com/
+GSC_CREDENTIALS_FILE=path/to/your/gsc-credentials.json
+GSC_PROPERTY_URL=https://your-domain.com/
+
+# Optional: Customize date range (default: week starting September 22, 2024)
+# START_DATE=2024-09-22
+# END_DATE=2024-09-29
