@@ -1,38 +1,59 @@
-# Weekly Stats Curator Environment Configuration
-# Copy this file to .env and fill in your actual API credentials
+# Social Media Stats Dashboard - API Configuration
+# Copy this file to .env and fill in your credentials
 
-# Reddit API Configuration
-# Get these from: https://www.reddit.com/prefs/apps
-REDDIT_CLIENT_ID=your_reddit_client_id_here
-REDDIT_CLIENT_SECRET=your_reddit_client_secret_here
+# ============================================
+# REDDIT (No approval needed - easiest!)
+# ============================================
+# Setup: https://www.reddit.com/prefs/apps
+# 1. Click "Create App" → Select "script"
+# 2. Name: anything, Redirect URI: http://localhost:8080
+# 3. Copy Client ID (under app name) and Secret
+#
 REDDIT_USERNAME=your_reddit_username
-REDDIT_PASSWORD=your_reddit_password
-REDDIT_USER_AGENT=WeeklyStatsCurator/1.0
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
 
-# LinkedIn API Configuration
-# Get these from: https://www.linkedin.com/developers/apps
-LINKEDIN_ACCESS_TOKEN=your_linkedin_access_token_here
-LINKEDIN_ORGANIZATION_ID=your_linkedin_organization_id_here
+# ============================================
+# LINKEDIN (Requires Community Management API)
+# ============================================
+# Setup: https://www.linkedin.com/developers/apps
+# 1. Create app and associate with Company Page
+# 2. Request "Community Management API" in Products tab
+# 3. Wait for approval (1-3 days)
+# 4. Generate token with r_organization_admin permission
+# 5. Find org ID in company page settings
+#
+LINKEDIN_ACCESS_TOKEN=your_linkedin_access_token
+LINKEDIN_ORGANIZATION_ID=your_organization_id
 
-# X (Twitter) API Configuration
-# Get these from: https://developer.twitter.com/en/portal/dashboard
-TWITTER_BEARER_TOKEN=your_twitter_bearer_token_here
-TWITTER_API_KEY=your_twitter_api_key_here
-TWITTER_API_SECRET=your_twitter_api_secret_here
-TWITTER_ACCESS_TOKEN=your_twitter_access_token_here
-TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret_here
+# ============================================
+# TWITTER / X (Requires developer account)
+# ============================================
+# Setup: https://developer.twitter.com/en/portal/dashboard
+# 1. Create project and app
+# 2. Generate bearer token
+#
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token
 TWITTER_USERNAME=your_twitter_username
 
-# YouTube API Configuration
-# Get API key from: https://console.developers.google.com/
-YOUTUBE_API_KEY=your_youtube_api_key_here
-YOUTUBE_CHANNEL_ID=your_youtube_channel_id_here
+# ============================================
+# YOUTUBE (Requires API key)
+# ============================================
+# Setup: https://console.developers.google.com/
+# 1. Enable YouTube Data API v3
+# 2. Create API key
+# 3. Find channel ID in YouTube Studio settings
+#
+YOUTUBE_API_KEY=your_youtube_api_key
+YOUTUBE_CHANNEL_ID=your_youtube_channel_id
 
-# Google Search Console Configuration
-# Download credentials JSON file from: https://console.developers.google.com/
-GSC_CREDENTIALS_FILE=path/to/your/gsc-credentials.json
+# ============================================
+# GOOGLE SEARCH CONSOLE (Requires service account)
+# ============================================
+# Setup: https://console.developers.google.com/
+# 1. Enable Search Console API
+# 2. Create service account
+# 3. Download JSON credentials file
+#
+GSC_CREDENTIALS_FILE=path/to/credentials.json
 GSC_PROPERTY_URL=https://your-domain.com/
-
-# Optional: Customize date range (default: week starting September 22, 2024)
-# START_DATE=2024-09-22
-# END_DATE=2024-09-29

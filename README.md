@@ -1,176 +1,155 @@
-# Weekly Stats Curator
+# 📊 Social Media Stats Dashboard
 
-A Python script to automatically collect and curate weekly statistics from various social media platforms and Google Search Console.
+A clean, minimalistic web dashboard to view your weekly social media statistics across multiple platforms.
 
-## Features
+## ✨ Features
 
-- **Multi-platform support**: Reddit, LinkedIn, X (Twitter), YouTube, Google Search Console
-- **Automated data collection**: Fetches posts, engagement metrics, and performance data
-- **CSV export**: Generates formatted reports for easy analysis
-- **Environment-based configuration**: Secure API key management
-- **Customizable date ranges**: Defaults to week starting September 22nd, 2024
+- **Beautiful Web UI**: Clean, modern dashboard with gradient design
+- **Multi-Platform Support**: Reddit, LinkedIn, Twitter/X, YouTube, Google Search Console
+- **Flexible Time Ranges**: View stats for last 7, 14, or 30 days
+- **Platform Selection**: Choose which platforms to display
+- **Real-time Data**: Fetches fresh data from platform APIs
 
-## Metrics Collected
+## 🚀 Quick Start
 
-| Platform | Posts | Karma | Impressions | CTR | Likes | Clicks (US) |
-|----------|-------|-------|-------------|-----|-------|-------------|
-| Reddit   | ✅    | ✅    | ❌          | ❌  | ❌    | ❌          |
-| LinkedIn | ✅    | ❌    | ✅          | ❌  | ✅    | ❌          |
-| X (Twitter) | ✅ | ❌    | ✅          | ❌  | ✅    | ❌          |
-| YouTube  | ✅    | ❌    | ✅          | ❌  | ✅    | ❌          |
-| Google Search Console | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
+### 1. Install Dependencies
 
-## Installation
-
-1. **Clone or download the script**
-   ```bash
-   # If you have git
-   git clone <repository-url>
-   cd weekly-stats-curator
-   
-   # Or simply download the files
-   ```
-
-2. **Install Python dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   # Copy the template
-   cp env_template.txt .env
-   
-   # Edit .env with your actual API credentials
-   nano .env
-   ```
-
-## API Setup Instructions
-
-### Reddit API
-1. Go to [Reddit App Preferences](https://www.reddit.com/prefs/apps)
-2. Click "Create App" or "Create Another App"
-3. Choose "script" as the app type
-4. Note down the client ID and secret
-5. Add your Reddit username and password to the .env file
-
-### LinkedIn API
-1. Go to [LinkedIn Developers](https://www.linkedin.com/developers/apps)
-2. Create a new app
-3. Request access to "Share on LinkedIn" and "Read organization content"
-4. Generate an access token
-5. Find your organization ID in LinkedIn Analytics
-
-### X (Twitter) API
-1. Go to [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard)
-2. Create a new project/app
-3. Generate API keys and access tokens
-4. Ensure you have read permissions for your account
-
-### YouTube API
-1. Go to [Google Cloud Console](https://console.developers.google.com/)
-2. Enable the YouTube Data API v3
-3. Create credentials (API key)
-4. Find your channel ID in YouTube Studio settings
-
-### Google Search Console
-1. Go to [Google Cloud Console](https://console.developers.google.com/)
-2. Enable the Search Console API
-3. Create a service account
-4. Download the JSON credentials file
-5. Add the property URL to Google Search Console
-
-## Usage
-
-### Basic Usage
 ```bash
-python weekly_stats_curator.py
+pip install -r requirements.txt
 ```
 
-### Custom Date Range
-You can modify the script to use different date ranges by editing the `start_date` variable in the `WeeklyStatsCurator` class:
+### 2. Configure API Credentials
 
-```python
-# In weekly_stats_curator.py
-self.start_date = datetime(2024, 9, 22)  # Change this date
-self.end_date = self.start_date + timedelta(days=7)
+Copy `env_template.txt` to `.env` and add your credentials:
+
+```bash
+cp env_template.txt .env
+# Edit .env with your API credentials
 ```
 
-### Output
-The script will:
-1. Print a summary to the console
-2. Generate a CSV file with detailed metrics
-3. Log any errors or warnings
+### 3. Run the Dashboard
 
-## Output Format
-
-The script generates a CSV file with the following columns:
-- **Channel**: Platform name
-- **Posts Count**: Number of posts published in the week
-- **Karma**: Total karma/score (Reddit only)
-- **Impressions**: Total impressions/views
-- **CTR**: Click-through rate percentage
-- **Likes**: Total likes/upvotes
-- **Clicks (US)**: US-specific clicks (GSC only)
-
-## Troubleshooting
-
-### Common Issues
-
-1. **API Rate Limits**
-   - Some APIs have rate limits. The script includes basic error handling
-   - Consider adding delays between API calls if you hit limits
-
-2. **Authentication Errors**
-   - Verify your API credentials in the .env file
-   - Check that tokens haven't expired
-   - Ensure proper permissions are granted
-
-3. **Missing Data**
-   - Some platforms may not return all requested metrics
-   - Check API documentation for available fields
-   - Verify your account has access to the required data
-
-4. **Date Range Issues**
-   - Ensure your date range is valid
-   - Some APIs may have restrictions on historical data
-   - Check timezone settings
-
-### Debug Mode
-Enable debug logging by modifying the logging level:
-```python
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+```bash
+python stats.py
 ```
 
-## Customization
+Open your browser and go to: **http://localhost:5000**
 
-### Adding New Platforms
-To add support for new platforms:
+## 🔑 API Setup
 
-1. Create a new method in the `WeeklyStatsCurator` class
-2. Add the platform configuration to the `__init__` method
-3. Call the new method in `collect_all_stats()`
-4. Update the environment template with new API credentials
+### Reddit (Easiest - No approval needed!)
 
-### Modifying Metrics
-To collect different metrics:
+1. Go to https://www.reddit.com/prefs/apps
+2. Click "Create App" → Select "script"
+3. Fill in any name and `http://localhost:8080` as redirect URI
+4. Copy Client ID and Client Secret to `.env`
+5. Add your Reddit username
 
-1. Update the `WeeklyStats` dataclass
-2. Modify the platform-specific methods
-3. Update the CSV export fieldnames
-4. Adjust the summary output
+**That's it! Reddit works immediately.**
 
-## Security Notes
+### LinkedIn (Requires approval)
 
-- Never commit your `.env` file to version control
-- Keep your API credentials secure
-- Regularly rotate your API keys
-- Use environment-specific credentials for different deployments
+1. Go to https://www.linkedin.com/developers/apps
+2. Create app and associate with your Company Page
+3. Request "Community Management API" access in Products tab
+4. Wait for approval (1-3 days)
+5. Generate access token with `r_organization_admin` permission
+6. Find your organization ID and add to `.env`
 
-## Contributing
+### Twitter/X (Requires approval)
 
-Feel free to submit issues, feature requests, or pull requests to improve the script.
+1. Go to https://developer.twitter.com/en/portal/dashboard
+2. Create project and app
+3. Generate bearer token
+4. Add to `.env` with your Twitter username
 
-## License
+### YouTube (Requires API key)
 
-This project is open source. Please check the license file for details.
+1. Go to https://console.developers.google.com/
+2. Enable YouTube Data API v3
+3. Create API key
+4. Add API key and channel ID to `.env`
+
+### Google Search Console (Requires service account)
+
+1. Go to https://console.developers.google.com/
+2. Enable Search Console API
+3. Create service account and download JSON credentials
+4. Add file path and property URL to `.env`
+
+## 📁 Project Structure
+
+```
+.
+├── stats.py                 # Main Flask app
+├── collectors/              # Platform collectors (modular)
+│   ├── reddit_collector.py
+│   ├── linkedin_collector.py
+│   ├── twitter_collector.py
+│   ├── youtube_collector.py
+│   └── gsc_collector.py
+├── templates/
+│   └── dashboard.html       # Web UI
+├── .env                     # Your credentials (not in git)
+├── env_template.txt         # Template for .env
+└── requirements.txt         # Python dependencies
+```
+
+## 💡 Usage Examples
+
+### View All Platforms (Last 7 Days)
+Just run `python stats.py` and open http://localhost:5000
+
+### View Only Reddit and LinkedIn
+Check/uncheck platforms in the web interface
+
+### View Last 30 Days
+Select "Last 30 days" from the dropdown
+
+## 🎨 Dashboard Features
+
+- **Platform Cards**: Each platform has its own card with key metrics
+- **Top Posts**: See your best performing content
+- **Subreddit Breakdown**: For Reddit, see stats by subreddit
+- **Engagement Rates**: Calculate engagement percentages
+- **Responsive Design**: Works on mobile and desktop
+
+## 🔒 Security
+
+- `.env` file is in `.gitignore` - never committed to git
+- API credentials stay on your local machine
+- No data is sent to external servers
+
+## 🐛 Troubleshooting
+
+### "No data" showing for a platform?
+- Check if API credentials are in `.env`
+- Verify credentials are correct
+- Check if you have posts in the selected time range
+
+### Reddit rate limiting?
+- Wait a few minutes between requests
+- Reddit public API has rate limits
+
+### LinkedIn showing 0 posts?
+- Make sure you have Community Management API access
+- Verify you're an ADMINISTRATOR on the company page
+- Check organization ID is correct
+
+## 📊 Metrics Collected
+
+| Platform | Metrics |
+|----------|---------|
+| Reddit | Posts, Karma, Comments, Top Post, Subreddit Breakdown |
+| LinkedIn | Posts, Likes, Comments, Shares, Impressions, Engagement Rate |
+| Twitter/X | Tweets, Likes, Retweets, Replies, Impressions, Engagement Rate |
+| YouTube | Videos, Views, Likes, Comments, Avg Views per Video |
+| Google Search | Clicks, Impressions, CTR, US Clicks |
+
+## 🤝 Contributing
+
+Feel free to open issues or submit pull requests!
+
+## 📝 License
+
+Open source - use as you like!
