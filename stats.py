@@ -6,14 +6,12 @@ A simple web app to view your weekly social media statistics
 
 import os
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, session
 from dotenv import load_dotenv
 import logging
 
 from collectors import (
     RedditCollector,
-    LinkedInCollector,
-    TwitterCollector,
     YouTubeCollector,
     GSCCollector
 )
@@ -27,6 +25,10 @@ logger = logging.getLogger(__name__)
 
 # Flask app
 app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
+
+# Store manual LinkedIn stats in memory (you could use a database instead)
+linkedin_manual_stats = {}
 
 
 def get_date_range(days=7):
@@ -41,7 +43,7 @@ def collect_stats(platforms=None, days=7):
     Collect stats from selected platforms
     
     Args:
-        platforms: list of platform names (e.g. ['reddit', 'linkedin'])
+        platforms: list of platform names (e.g. ['reddit', 'youtube'])
                   If None, collects from all configured platforms
         days: number of days to look back
     
@@ -55,34 +57,41 @@ def collect_stats(platforms=None, days=7):
         'platforms': {}
     }
     
-    # Reddit
+    # Reddit - Support up to 3 accounts
     if not platforms or 'reddit' in platforms:
-        username = os.getenv('REDDIT_USERNAME')
-        if username:
-            collector = RedditCollector(username)
-            results['platforms']['reddit'] = collector.collect(start_date, end_date)
-    
-    # LinkedIn
-    if not platforms or 'linkedin' in platforms:
-        access_token = os.getenv('LINKEDIN_ACCESS_TOKEN')
-        org_id = os.getenv('LINKEDIN_ORGANIZATION_ID')
-        if access_token and org_id:
-            collector = LinkedInCollector(access_token, org_id)
-            results['platforms']['linkedin'] = collector.collect(start_date, end_date)
-    
-    # Twitter/X
-    if not platforms or 'twitter' in platforms:
-        bearer_token = os.getenv('TWITTER_BEARER_TOKEN')
-        username = os.getenv('TWITTER_USERNAME')
-        if bearer_token and username:
-            collector = TwitterCollector(bearer_token, username)
-            results['platforms']['twitter'] = collector.collect(start_date, end_date)
+        reddit_accounts = []
+        for i in range(1, 4):  # Support 3 Reddit accounts
+            username = os.getenv(f'REDDIT_USERNAME_{i}')
+            display_name = os.getenv(f'REDDIT_DISPLAY_NAME_{i}', username)  # Default to username if no display name
+            if username and username.strip():
+                reddit_accounts.append({
+                    'username': username,
+                    'display_name': display_name if display_name and display_name.strip() else username
+                })
+        
+        if reddit_accounts:
+            # Collect stats for each Reddit account
+            all_reddit_stats = []
+            for account in reddit_accounts:
+                collector = RedditCollector(account['username'])
+                stats = collector.collect(start_date, end_date)
+                stats['username'] = account['username']
+                stats['display_name'] = account['display_name']
+                all_reddit_stats.append(stats)
+            
+            # Always show individual accounts (even if only one)
+            results['platforms']['reddit'] = {
+                'accounts': all_reddit_stats,
+                'total_posts': sum(s['posts_count'] for s in all_reddit_stats),
+                'total_karma': sum(s['karma'] for s in all_reddit_stats),
+                'total_comments': sum(s['comments'] for s in all_reddit_stats)
+            }
     
     # YouTube
     if not platforms or 'youtube' in platforms:
         api_key = os.getenv('YOUTUBE_API_KEY')
         channel_id = os.getenv('YOUTUBE_CHANNEL_ID')
-        if api_key and channel_id:
+        if api_key and channel_id and api_key != 'your_youtube_api_key_here':
             collector = YouTubeCollector(api_key, channel_id)
             results['platforms']['youtube'] = collector.collect(start_date, end_date)
     
@@ -90,7 +99,7 @@ def collect_stats(platforms=None, days=7):
     if not platforms or 'gsc' in platforms:
         credentials_file = os.getenv('GSC_CREDENTIALS_FILE')
         property_url = os.getenv('GSC_PROPERTY_URL')
-        if credentials_file and property_url:
+        if credentials_file and property_url and credentials_file != 'path/to/gsc-credentials.json':
             collector = GSCCollector(credentials_file, property_url)
             results['platforms']['gsc'] = collector.collect(start_date, end_date)
     
@@ -107,10 +116,33 @@ def index():
     # Collect stats
     stats = collect_stats(platforms=selected if selected else None, days=days)
     
+    # Add LinkedIn manual stats if available
+    if linkedin_manual_stats:
+        stats['platforms']['linkedin'] = linkedin_manual_stats
+    
     return render_template('dashboard.html', 
                          stats=stats, 
-                         selected=selected if selected else ['reddit', 'linkedin', 'twitter', 'youtube', 'gsc'],
+                         selected=selected if selected else ['reddit', 'youtube', 'gsc'],
                          days=days)
+
+
+@app.route('/api/linkedin', methods=['POST'])
+def save_linkedin_stats():
+    """Save manually entered LinkedIn stats"""
+    global linkedin_manual_stats
+    
+    data = request.get_json()
+    linkedin_manual_stats = {
+        'posts_count': int(data.get('posts_count', 0)),
+        'likes': int(data.get('likes', 0)),
+        'comments': int(data.get('comments', 0)),
+        'shares': int(data.get('shares', 0)),
+        'impressions': int(data.get('impressions', 0)),
+        'engagement_rate': float(data.get('engagement_rate', 0)),
+        'manual': True
+    }
+    
+    return jsonify({'success': True, 'message': 'LinkedIn stats saved!'})
 
 
 if __name__ == '__main__':

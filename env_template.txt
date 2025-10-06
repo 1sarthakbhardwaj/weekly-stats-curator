@@ -1,59 +1,36 @@
-# Social Media Stats Dashboard - API Configuration
+# Social Media Stats Dashboard Configuration
 # Copy this file to .env and fill in your credentials
 
 # ============================================
-# REDDIT (No approval needed - easiest!)
+# REDDIT ACCOUNTS (Add up to 3 accounts)
 # ============================================
-# Setup: https://www.reddit.com/prefs/apps
-# 1. Click "Create App" → Select "script"
-# 2. Name: anything, Redirect URI: http://localhost:8080
-# 3. Copy Client ID (under app name) and Secret
-#
-REDDIT_USERNAME=your_reddit_username
-REDDIT_CLIENT_ID=your_reddit_client_id
-REDDIT_CLIENT_SECRET=your_reddit_client_secret
+# Just usernames - no API keys or passwords needed!
+# Add display names to show on dashboard
+# Leave empty if you don't want to track that slot
+
+REDDIT_USERNAME_1=your_reddit_username_1
+REDDIT_DISPLAY_NAME_1=Display Name 1
+
+REDDIT_USERNAME_2=your_reddit_username_2
+REDDIT_DISPLAY_NAME_2=Display Name 2
+
+REDDIT_USERNAME_3=your_reddit_username_3
+REDDIT_DISPLAY_NAME_3=Display Name 3
 
 # ============================================
-# LINKEDIN (Requires Community Management API)
+# YOUTUBE (FREE API - 10 minutes setup)
 # ============================================
-# Setup: https://www.linkedin.com/developers/apps
-# 1. Create app and associate with Company Page
-# 2. Request "Community Management API" in Products tab
-# 3. Wait for approval (1-3 days)
-# 4. Generate token with r_organization_admin permission
-# 5. Find org ID in company page settings
-#
-LINKEDIN_ACCESS_TOKEN=your_linkedin_access_token
-LINKEDIN_ORGANIZATION_ID=your_organization_id
+# See SETUP_YOUTUBE.md for detailed instructions
+# API Key: Get from console.developers.google.com
+# Channel ID: Get from YouTube Studio or use @YourChannelName
+YOUTUBE_API_KEY=your_youtube_api_key_here
+YOUTUBE_CHANNEL_ID=@YourChannelName
 
 # ============================================
-# TWITTER / X (Requires developer account)
+# GOOGLE SEARCH CONSOLE (FREE API - 15 minutes setup)
 # ============================================
-# Setup: https://developer.twitter.com/en/portal/dashboard
-# 1. Create project and app
-# 2. Generate bearer token
-#
-TWITTER_BEARER_TOKEN=your_twitter_bearer_token
-TWITTER_USERNAME=your_twitter_username
-
-# ============================================
-# YOUTUBE (Requires API key)
-# ============================================
-# Setup: https://console.developers.google.com/
-# 1. Enable YouTube Data API v3
-# 2. Create API key
-# 3. Find channel ID in YouTube Studio settings
-#
-YOUTUBE_API_KEY=your_youtube_api_key
-YOUTUBE_CHANNEL_ID=your_youtube_channel_id
-
-# ============================================
-# GOOGLE SEARCH CONSOLE (Requires service account)
-# ============================================
-# Setup: https://console.developers.google.com/
-# 1. Enable Search Console API
-# 2. Create service account
-# 3. Download JSON credentials file
-#
-GSC_CREDENTIALS_FILE=path/to/credentials.json
+# See SETUP_GSC.md for detailed instructions
+# Credentials File: Path to your service account JSON file
+# Property URL: Your website URL (exact match from Search Console)
+GSC_CREDENTIALS_FILE=path/to/gsc-credentials.json
 GSC_PROPERTY_URL=https://your-domain.com/

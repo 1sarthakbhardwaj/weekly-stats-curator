@@ -1,13 +1,14 @@
 # 📊 Social Media Stats Dashboard
 
-A clean, minimalistic web dashboard to view your weekly social media statistics across multiple platforms.
+A clean, minimalistic web dashboard to view your weekly social media statistics.
 
 ## ✨ Features
 
 - **Beautiful Web UI**: Clean, modern dashboard with gradient design
-- **Multi-Platform Support**: Reddit, LinkedIn, Twitter/X, YouTube, Google Search Console
+- **Multiple Reddit Accounts**: Track up to 3 Reddit accounts
+- **YouTube Analytics**: Video stats with free API
+- **Google Search Console**: SEO and search performance tracking
 - **Flexible Time Ranges**: View stats for last 7, 14, or 30 days
-- **Platform Selection**: Choose which platforms to display
 - **Real-time Data**: Fetches fresh data from platform APIs
 
 ## 🚀 Quick Start
@@ -18,13 +19,13 @@ A clean, minimalistic web dashboard to view your weekly social media statistics 
 pip install -r requirements.txt
 ```
 
-### 2. Configure API Credentials
+### 2. Configure Accounts
 
-Copy `env_template.txt` to `.env` and add your credentials:
+Copy `env_template.txt` to `.env` and add your usernames:
 
 ```bash
 cp env_template.txt .env
-# Edit .env with your API credentials
+# Edit .env with your accounts
 ```
 
 ### 3. Run the Dashboard
@@ -35,47 +36,48 @@ python stats.py
 
 Open your browser and go to: **http://localhost:5000**
 
-## 🔑 API Setup
+## 🔑 Setup Guide
 
-### Reddit (Easiest - No approval needed!)
+### ✅ Reddit (No API needed - Works immediately!)
 
-1. Go to https://www.reddit.com/prefs/apps
-2. Click "Create App" → Select "script"
-3. Fill in any name and `http://localhost:8080` as redirect URI
-4. Copy Client ID and Client Secret to `.env`
-5. Add your Reddit username
+Just add your Reddit usernames to `.env`:
+```bash
+REDDIT_USERNAME_1=your_username_1
+REDDIT_USERNAME_2=your_username_2  # Optional
+REDDIT_USERNAME_3=your_username_3  # Optional
+```
 
-**That's it! Reddit works immediately.**
+**That's it!** Uses public Reddit API - no authentication needed.
 
-### LinkedIn (Requires approval)
+### 🎥 YouTube (10 minutes, FREE)
 
-1. Go to https://www.linkedin.com/developers/apps
-2. Create app and associate with your Company Page
-3. Request "Community Management API" access in Products tab
-4. Wait for approval (1-3 days)
-5. Generate access token with `r_organization_admin` permission
-6. Find your organization ID and add to `.env`
+**See [SETUP_YOUTUBE.md](SETUP_YOUTUBE.md) for detailed instructions.**
 
-### Twitter/X (Requires approval)
+Quick steps:
+1. Go to [Google Cloud Console](https://console.developers.google.com/)
+2. Create project & enable "YouTube Data API v3"
+3. Create API key (FREE - 10,000 requests/day)
+4. Get your channel ID from YouTube Studio
+5. Add to `.env`:
+```bash
+YOUTUBE_API_KEY=your_api_key
+YOUTUBE_CHANNEL_ID=@YourChannelName
+```
 
-1. Go to https://developer.twitter.com/en/portal/dashboard
-2. Create project and app
-3. Generate bearer token
-4. Add to `.env` with your Twitter username
+### 🔍 Google Search Console (15 minutes, FREE)
 
-### YouTube (Requires API key)
+**See [SETUP_GSC.md](SETUP_GSC.md) for detailed instructions.**
 
-1. Go to https://console.developers.google.com/
-2. Enable YouTube Data API v3
-3. Create API key
-4. Add API key and channel ID to `.env`
-
-### Google Search Console (Requires service account)
-
-1. Go to https://console.developers.google.com/
-2. Enable Search Console API
-3. Create service account and download JSON credentials
-4. Add file path and property URL to `.env`
+Quick steps:
+1. Go to [Google Cloud Console](https://console.developers.google.com/)
+2. Enable "Google Search Console API"
+3. Create service account & download JSON key
+4. Add service account email to Search Console users
+5. Add to `.env`:
+```bash
+GSC_CREDENTIALS_FILE=/path/to/gsc-credentials.json
+GSC_PROPERTY_URL=https://your-domain.com/
+```
 
 ## 📁 Project Structure
 
@@ -84,14 +86,14 @@ Open your browser and go to: **http://localhost:5000**
 ├── stats.py                 # Main Flask app
 ├── collectors/              # Platform collectors (modular)
 │   ├── reddit_collector.py
-│   ├── linkedin_collector.py
-│   ├── twitter_collector.py
 │   ├── youtube_collector.py
 │   └── gsc_collector.py
 ├── templates/
 │   └── dashboard.html       # Web UI
 ├── .env                     # Your credentials (not in git)
 ├── env_template.txt         # Template for .env
+├── SETUP_YOUTUBE.md         # YouTube setup guide
+├── SETUP_GSC.md             # Google Search Console setup guide
 └── requirements.txt         # Python dependencies
 ```
 
@@ -100,8 +102,8 @@ Open your browser and go to: **http://localhost:5000**
 ### View All Platforms (Last 7 Days)
 Just run `python stats.py` and open http://localhost:5000
 
-### View Only Reddit and LinkedIn
-Check/uncheck platforms in the web interface
+### View Only Reddit
+Uncheck YouTube and GSC in the web interface
 
 ### View Last 30 Days
 Select "Last 30 days" from the dropdown
@@ -109,10 +111,18 @@ Select "Last 30 days" from the dropdown
 ## 🎨 Dashboard Features
 
 - **Platform Cards**: Each platform has its own card with key metrics
+- **Multiple Reddit Accounts**: Shows combined stats + individual breakdowns
 - **Top Posts**: See your best performing content
 - **Subreddit Breakdown**: For Reddit, see stats by subreddit
-- **Engagement Rates**: Calculate engagement percentages
 - **Responsive Design**: Works on mobile and desktop
+
+## 📊 Metrics Collected
+
+| Platform | Metrics |
+|----------|---------|
+| Reddit | Posts, Karma, Comments, Top Post, Subreddit Breakdown |
+| YouTube | Videos, Views, Likes, Comments, Avg Views per Video |
+| Google Search | Clicks, Impressions, CTR, US Clicks |
 
 ## 🔒 Security
 
@@ -125,26 +135,29 @@ Select "Last 30 days" from the dropdown
 ### "No data" showing for a platform?
 - Check if API credentials are in `.env`
 - Verify credentials are correct
-- Check if you have posts in the selected time range
+- Check if you have posts/videos in the selected time range
 
-### Reddit rate limiting?
-- Wait a few minutes between requests
-- Reddit public API has rate limits
+### Reddit not working?
+- Verify username is correct (case-sensitive)
+- Check if profile is public
+- Make sure you have posts in the time range
 
-### LinkedIn showing 0 posts?
-- Make sure you have Community Management API access
-- Verify you're an ADMINISTRATOR on the company page
-- Check organization ID is correct
+### YouTube showing "No videos"?
+- Verify API key is correct
+- Check YouTube Data API v3 is enabled
+- Try both `@ChannelName` and `UC...` channel ID formats
 
-## 📊 Metrics Collected
+### Google Search Console errors?
+- Verify credentials file path is correct
+- Check service account email is added to GSC users
+- Ensure property URL matches exactly
 
-| Platform | Metrics |
-|----------|---------|
-| Reddit | Posts, Karma, Comments, Top Post, Subreddit Breakdown |
-| LinkedIn | Posts, Likes, Comments, Shares, Impressions, Engagement Rate |
-| Twitter/X | Tweets, Likes, Retweets, Replies, Impressions, Engagement Rate |
-| YouTube | Videos, Views, Likes, Comments, Avg Views per Video |
-| Google Search | Clicks, Impressions, CTR, US Clicks |
+## 🆓 Cost
+
+**Everything is FREE!**
+- Reddit API: FREE (no limits)
+- YouTube API: FREE (10,000 requests/day)
+- Google Search Console API: FREE (unlimited)
 
 ## 🤝 Contributing
 
