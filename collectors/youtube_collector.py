@@ -48,7 +48,10 @@ class YouTubeCollector:
         
         youtube = build('youtube', 'v3', developerKey=self.api_key)
         
-        # Get channel videos
+        # Get channel statistics (subscribers, total videos, total views)
+        channel_stats = self._get_channel_stats(youtube)
+        
+        # Get channel videos for the date range
         request = youtube.search().list(
             part='snippet',
             channelId=self.channel_id,
@@ -86,8 +89,32 @@ class YouTubeCollector:
             'views': total_views,
             'likes': total_likes,
             'comments': total_comments,
-            'avg_views': total_views / len(videos) if videos else 0
+            'avg_views': total_views / len(videos) if videos else 0,
+            'subscribers': channel_stats.get('subscribers', 0),
+            'total_videos': channel_stats.get('total_videos', 0),
+            'total_channel_views': channel_stats.get('total_views', 0)
         }
+    
+    def _get_channel_stats(self, youtube):
+        """Get overall channel statistics"""
+        try:
+            request = youtube.channels().list(
+                part='statistics',
+                id=self.channel_id
+            )
+            response = request.execute()
+            
+            if response.get('items'):
+                stats = response['items'][0]['statistics']
+                return {
+                    'subscribers': int(stats.get('subscriberCount', 0)),
+                    'total_videos': int(stats.get('videoCount', 0)),
+                    'total_views': int(stats.get('viewCount', 0))
+                }
+        except Exception as e:
+            logger.warning(f"Could not fetch channel stats: {e}")
+        
+        return {'subscribers': 0, 'total_videos': 0, 'total_views': 0}
     
     def _collect_via_scraping(self):
         """Collect basic stats by scraping YouTube channel page (no API needed)"""
@@ -134,7 +161,10 @@ class YouTubeCollector:
                 'views': 0,  # Requires API or detailed scraping
                 'likes': 0,
                 'comments': 0,
-                'avg_views': subscribers  # Use subscribers as proxy for channel reach
+                'avg_views': 0,
+                'subscribers': subscribers,
+                'total_videos': 0,  # Requires API
+                'total_channel_views': 0  # Requires API
             }
             
         except Exception as e:
@@ -148,5 +178,8 @@ class YouTubeCollector:
             'views': 0,
             'likes': 0,
             'comments': 0,
-            'avg_views': 0
+            'avg_views': 0,
+            'subscribers': 0,
+            'total_videos': 0,
+            'total_channel_views': 0
         }

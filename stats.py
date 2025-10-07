@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 # Flask app
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.jinja_env.auto_reload = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Store manual LinkedIn stats in memory (you could use a database instead)
 linkedin_manual_stats = {}
@@ -91,17 +94,43 @@ def collect_stats(platforms=None, days=7):
     if not platforms or 'youtube' in platforms:
         api_key = os.getenv('YOUTUBE_API_KEY')
         channel_id = os.getenv('YOUTUBE_CHANNEL_ID')
-        if api_key and channel_id and api_key != 'your_youtube_api_key_here':
-            collector = YouTubeCollector(api_key, channel_id)
-            results['platforms']['youtube'] = collector.collect(start_date, end_date)
+        if api_key and channel_id and api_key.strip() and api_key != 'your_youtube_api_key_here':
+            try:
+                collector = YouTubeCollector(api_key, channel_id)
+                results['platforms']['youtube'] = collector.collect(start_date, end_date)
+            except Exception as e:
+                logger.error(f"YouTube collection failed: {e}")
+                results['platforms']['youtube'] = {
+                    'videos_count': 0, 'views': 0, 'likes': 0, 'comments': 0, 
+                    'avg_views': 0, 'subscribers': 0, 'total_videos': 0, 'total_channel_views': 0
+                }
+        else:
+            # Show placeholder if not configured
+            results['platforms']['youtube'] = {
+                'videos_count': 0, 'views': 0, 'likes': 0, 'comments': 0,
+                'avg_views': 0, 'subscribers': 0, 'total_videos': 0, 'total_channel_views': 0,
+                'error': 'API not configured'
+            }
     
     # Google Search Console
     if not platforms or 'gsc' in platforms:
         credentials_file = os.getenv('GSC_CREDENTIALS_FILE')
         property_url = os.getenv('GSC_PROPERTY_URL')
         if credentials_file and property_url and credentials_file != 'path/to/gsc-credentials.json':
-            collector = GSCCollector(credentials_file, property_url)
-            results['platforms']['gsc'] = collector.collect(start_date, end_date)
+            try:
+                collector = GSCCollector(credentials_file, property_url)
+                results['platforms']['gsc'] = collector.collect(start_date, end_date)
+            except Exception as e:
+                logger.error(f"GSC collection failed: {e}")
+                results['platforms']['gsc'] = {
+                    'clicks': 0, 'impressions': 0, 'ctr': 0, 'clicks_us': 0
+                }
+        else:
+            # Show placeholder if not configured
+            results['platforms']['gsc'] = {
+                'clicks': 0, 'impressions': 0, 'ctr': 0, 'clicks_us': 0,
+                'error': 'API not configured'
+            }
     
     return results
 
@@ -150,8 +179,8 @@ if __name__ == '__main__':
     print("🚀 Social Media Stats Dashboard")
     print("="*60)
     print("\nStarting web server...")
-    print("Open your browser and go to: http://localhost:5000")
+    print("Open your browser and go to: http://localhost:5050")
     print("\nPress Ctrl+C to stop the server\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5050)
 

@@ -19,14 +19,14 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -60,6 +60,7 @@
             align-items: center;
             gap: 5px;
             font-weight: 500;
+            cursor: pointer;
         }
 
         .controls input[type="checkbox"] {
@@ -90,7 +91,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -116,27 +117,9 @@
             gap: 10px;
         }
 
-        .stat-card h2::before {
-            /* hide decorative block in favor of emojis/icons */
-            display: none;
-        }
-
-        .icon {
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .icon svg {
-            width: 24px;
-            height: 24px;
-            display: block;
-        }
-
         .metrics {
             display: grid;
-            gap: 15px;
+            gap: 12px;
         }
 
         .metric {
@@ -157,6 +140,19 @@
             font-weight: 700;
             font-size: 1.3rem;
             color: #333;
+        }
+
+        .section-divider {
+            margin: 15px 0;
+            padding: 8px 0;
+            border-top: 2px solid #eee;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .highlight-metric {
+            background: linear-gradient(135deg, #fff5f5, #ffe8e8) !important;
         }
 
         .top-post {
@@ -197,7 +193,7 @@
         .no-data {
             text-align: center;
             color: #999;
-            padding: 40px;
+            padding: 30px;
             font-style: italic;
         }
 
@@ -206,42 +202,6 @@
             color: white;
             margin-top: 40px;
             opacity: 0.8;
-        }
-
-        .linkedin-toggle-btn, .linkedin-save-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #0A66C2, #0077B5);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .linkedin-toggle-btn:hover, .linkedin-save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
-        }
-
-        .linkedin-save-btn {
-            margin-top: 10px;
-            background: linear-gradient(135deg, #28a745, #20c997);
-        }
-
-        .linkedin-form input {
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        .linkedin-form input:focus {
-            outline: none;
-            border-color: #0A66C2;
         }
 
         @media (max-width: 768px) {
@@ -297,25 +257,11 @@
         </div>
 
         <div class="stats-grid">
+            <!-- REDDIT CARDS -->
             {% if 'reddit' in stats.platforms and stats.platforms.reddit.accounts %}
-            <!-- Show individual Reddit account cards -->
             {% for account in stats.platforms.reddit.accounts %}
             <div class="stat-card">
-                <h2>
-                    <span class="icon" aria-hidden="true">
-                        <!-- Simple Reddit mark -->
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="13" r="7" stroke="#FF4500" stroke-width="2"/>
-                            <circle cx="9" cy="12" r="1.5" fill="#FF4500"/>
-                            <circle cx="15" cy="12" r="1.5" fill="#FF4500"/>
-                            <path d="M8 15c1 .8 2.7 1.2 4 .2 1.3 1 3 .6 4-.2" stroke="#FF4500" stroke-width="2" stroke-linecap="round"/>
-                            <circle cx="18.5" cy="8.5" r="1.3" fill="#FF4500"/>
-                            <path d="M13 6l2.8 .7" stroke="#FF4500" stroke-width="2" stroke-linecap="round"/>
-                            <circle cx="13" cy="6" r="1" fill="#FF4500"/>
-                        </svg>
-                    </span>
-                    Reddit - {{ account.display_name }}
-                </h2>
+                <h2>🔴 Reddit - {{ account.display_name }}</h2>
                 {% if account.posts_count > 0 %}
                 <div class="metrics">
                     <div class="metric">
@@ -341,8 +287,7 @@
                     <div class="top-post-title">🏆 Top Post</div>
                     <p>{{ account.top_post.title[:80] }}{% if account.top_post.title|length > 80 %}...{% endif %}</p>
                     <p class="top-post-meta">
-                        r/{{ account.top_post.subreddit }} • 
-                        {{ account.top_post.score }} karma
+                        r/{{ account.top_post.subreddit }} • {{ account.top_post.score }} karma
                     </p>
                 </div>
                 {% endif %}
@@ -365,20 +310,58 @@
             {% endfor %}
             {% endif %}
 
+            <!-- YOUTUBE CARD -->
+            {% if 'youtube' in stats.platforms %}
+            <div class="stat-card">
+                <h2>▶️ YouTube</h2>
+                <div class="metrics">
+                    <!-- Channel Stats -->
+                    {% if stats.platforms.youtube.subscribers > 0 %}
+                    <div class="metric highlight-metric">
+                        <span class="metric-label">👥 Subscribers</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.subscribers) }}</span>
+                    </div>
+                    <div class="metric highlight-metric">
+                        <span class="metric-label">📹 Total Videos</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.total_videos) }}</span>
+                    </div>
+                    <div class="metric highlight-metric">
+                        <span class="metric-label">👁️ Total Channel Views</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.total_channel_views) }}</span>
+                    </div>
+                    
+                    <div class="section-divider">📊 Stats for Selected Period</div>
+                    {% endif %}
+                    
+                    <!-- Period Stats -->
+                    {% if stats.platforms.youtube.videos_count > 0 %}
+                    <div class="metric">
+                        <span class="metric-label">Videos Published</span>
+                        <span class="metric-value">{{ stats.platforms.youtube.videos_count }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Views</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.views) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Likes</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.likes) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Comments</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.comments) }}</span>
+                    </div>
+                    {% else %}
+                    <div class="no-data">No videos published in this period</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- LINKEDIN CARD -->
             {% if 'linkedin' in stats.platforms %}
             <div class="stat-card">
-                <h2>
-                    <span class="icon" aria-hidden="true">
-                        <!-- Simple LinkedIn 'in' in rounded square -->
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="2" y="2" width="20" height="20" rx="3" fill="#0A66C2"/>
-                            <rect x="5" y="9" width="3" height="8" fill="#ffffff"/>
-                            <circle cx="6.5" cy="6.5" r="1.5" fill="#ffffff"/>
-                            <path d="M12 9h2.6c2.2 0 3.4 1.2 3.4 3.3V17h-3v-3.6c0-.9-.5-1.5-1.5-1.5H12V17H9V9h3z" fill="#ffffff"/>
-                        </svg>
-                    </span>
-                    LinkedIn {% if stats.platforms.linkedin.manual %}<span style="font-size: 0.7em; opacity: 0.7;">(Manual)</span>{% endif %}
-                </h2>
+                <h2>💼 LinkedIn</h2>
                 {% if stats.platforms.linkedin.posts_count > 0 %}
                 <div class="metrics">
                     <div class="metric">
@@ -387,15 +370,15 @@
                     </div>
                     <div class="metric">
                         <span class="metric-label">Likes</span>
-                        <span class="metric-value">{{ stats.platforms.linkedin.likes }}</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.linkedin.likes) }}</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Comments</span>
-                        <span class="metric-value">{{ stats.platforms.linkedin.comments }}</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.linkedin.comments) }}</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Shares</span>
-                        <span class="metric-value">{{ stats.platforms.linkedin.shares }}</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.linkedin.shares) }}</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Impressions</span>
@@ -407,84 +390,15 @@
                     </div>
                 </div>
                 {% else %}
-                <div class="no-data" style="margin-bottom: 15px;">Enter your LinkedIn stats manually</div>
-                {% endif %}
-                
-                <!-- Manual input form -->
-                <div class="linkedin-form" style="margin-top: 15px;">
-                    <button onclick="toggleLinkedInForm()" class="linkedin-toggle-btn">
-                        ✏️ Enter LinkedIn Stats
-                    </button>
-                    <div id="linkedinForm" style="display: none; margin-top: 15px;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <input type="number" id="li_posts" placeholder="Posts" min="0" value="{{ stats.platforms.linkedin.posts_count if 'linkedin' in stats.platforms else 0 }}">
-                            <input type="number" id="li_likes" placeholder="Likes" min="0" value="{{ stats.platforms.linkedin.likes if 'linkedin' in stats.platforms else 0 }}">
-                            <input type="number" id="li_comments" placeholder="Comments" min="0" value="{{ stats.platforms.linkedin.comments if 'linkedin' in stats.platforms else 0 }}">
-                            <input type="number" id="li_shares" placeholder="Shares" min="0" value="{{ stats.platforms.linkedin.shares if 'linkedin' in stats.platforms else 0 }}">
-                            <input type="number" id="li_impressions" placeholder="Impressions" min="0" value="{{ stats.platforms.linkedin.impressions if 'linkedin' in stats.platforms else 0 }}">
-                            <input type="number" id="li_engagement" placeholder="Engagement %" min="0" max="100" step="0.01" value="{{ stats.platforms.linkedin.engagement_rate if 'linkedin' in stats.platforms else 0 }}">
-                        </div>
-                        <button onclick="saveLinkedInStats()" class="linkedin-save-btn">
-                            💾 Save Stats
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            {% if 'youtube' in stats.platforms %}
-            <div class="stat-card">
-                <h2>
-                    <span class="icon" aria-hidden="true">
-                        <!-- Simple YouTube play button -->
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="2" y="6" width="20" height="12" rx="3" fill="#FF0000"/>
-                            <path d="M10 9.5v5l5-2.5-5-2.5z" fill="#ffffff"/>
-                        </svg>
-                    </span>
-                    YouTube
-                </h2>
-                {% if stats.platforms.youtube.videos_count > 0 %}
-                <div class="metrics">
-                    <div class="metric">
-                        <span class="metric-label">Videos</span>
-                        <span class="metric-value">{{ stats.platforms.youtube.videos_count }}</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Views</span>
-                        <span class="metric-value">{{ "{:,}".format(stats.platforms.youtube.views) }}</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Likes</span>
-                        <span class="metric-value">{{ stats.platforms.youtube.likes }}</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Comments</span>
-                        <span class="metric-value">{{ stats.platforms.youtube.comments }}</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Avg Views/Video</span>
-                        <span class="metric-value">{{ "{:,.0f}".format(stats.platforms.youtube.avg_views) }}</span>
-                    </div>
-                </div>
-                {% else %}
-                <div class="no-data">No videos or API not configured</div>
+                <div class="no-data">No LinkedIn data available</div>
                 {% endif %}
             </div>
             {% endif %}
 
+            <!-- GOOGLE SEARCH CONSOLE CARD -->
             {% if 'gsc' in stats.platforms %}
             <div class="stat-card">
-                <h2>
-                    <span class="icon" aria-hidden="true">
-                        <!-- Simple magnifier -->
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="11" cy="11" r="6" stroke="#4285F4" stroke-width="2"/>
-                            <path d="M15.5 15.5L20 20" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </span>
-                    Google Search
-                </h2>
+                <h2>🔍 Google Search Console</h2>
                 {% if stats.platforms.gsc.clicks > 0 %}
                 <div class="metrics">
                     <div class="metric">
@@ -497,7 +411,7 @@
                     </div>
                     <div class="metric">
                         <span class="metric-label">CTR</span>
-                        <span class="metric-value">{{ stats.platforms.gsc.ctr }}%</span>
+                        <span class="metric-value">{{ "%.2f"|format(stats.platforms.gsc.ctr) }}%</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">US Clicks</span>
@@ -505,53 +419,16 @@
                     </div>
                 </div>
                 {% else %}
-                <div class="no-data">No data or API not configured</div>
+                <div class="no-data">No search console data or API not configured</div>
                 {% endif %}
             </div>
             {% endif %}
         </div>
 
         <footer>
-            <p>Social Media Stats Dashboard • Built with Flask</p>
+            <p>📈 Social Media Stats Dashboard • Built with Flask</p>
+            <p style="font-size: 0.9rem; margin-top: 5px;">Tracking: {{ stats.platforms.keys()|list|join(', ') }}</p>
         </footer>
     </div>
-    
-    <script>
-        function toggleLinkedInForm() {
-            const form = document.getElementById('linkedinForm');
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        }
-        
-        function saveLinkedInStats() {
-            const data = {
-                posts_count: parseInt(document.getElementById('li_posts').value) || 0,
-                likes: parseInt(document.getElementById('li_likes').value) || 0,
-                comments: parseInt(document.getElementById('li_comments').value) || 0,
-                shares: parseInt(document.getElementById('li_shares').value) || 0,
-                impressions: parseInt(document.getElementById('li_impressions').value) || 0,
-                engagement_rate: parseFloat(document.getElementById('li_engagement').value) || 0
-            };
-            
-            fetch('/api/linkedin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('✅ LinkedIn stats saved! Refresh the page to see updated stats.');
-                } else {
-                    alert('❌ Failed to save stats');
-                }
-            })
-            .catch(error => {
-                alert('❌ Error: ' + error);
-            });
-        }
-    </script>
 </body>
 </html>
-
