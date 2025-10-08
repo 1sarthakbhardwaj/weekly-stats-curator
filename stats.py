@@ -209,6 +209,19 @@ def save_linkedin_stats():
     return jsonify({'success': True, 'message': 'LinkedIn stats saved!'})
 
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint to verify environment variables"""
+    env_check = {
+        'status': 'ok',
+        'reddit_configured': bool(os.getenv('REDDIT_USERNAME_1')),
+        'youtube_configured': bool(os.getenv('YOUTUBE_API_KEY')),
+        'github_configured': bool(os.getenv('GITHUB_USERNAME')),
+        'environment': 'production' if (os.getenv('RENDER') or os.getenv('RAILWAY_ENVIRONMENT')) else 'local'
+    }
+    return jsonify(env_check)
+
+
 if __name__ == '__main__':
     # Check if running in production or local
     is_production = os.getenv('RENDER') or os.getenv('RAILWAY_ENVIRONMENT') or os.getenv('VERCEL')
