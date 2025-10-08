@@ -217,5 +217,7 @@ if __name__ == '__main__':
     print("Open your browser and go to: http://localhost:5050")
     print("\nPress Ctrl+C to stop the server\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5050)
+    # Get port from environment variable (for deployment) or use 5050 for local
+    port = int(os.getenv('PORT', 5050))
+    app.run(debug=True, host='0.0.0.0', port=port)
 

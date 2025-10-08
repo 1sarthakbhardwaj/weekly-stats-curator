@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: social-media-stats-dashboard
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn stats:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: REDDIT_USERNAME_1
+        sync: false
+      - key: REDDIT_DISPLAY_NAME_1
+        sync: false
+      - key: REDDIT_USERNAME_2
+        sync: false
+      - key: REDDIT_DISPLAY_NAME_2
+        sync: false
+      - key: REDDIT_USERNAME_3
+        sync: false
+      - key: REDDIT_DISPLAY_NAME_3
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: YOUTUBE_CHANNEL_ID
+        sync: false
+      - key: GSC_CREDENTIALS_FILE
+        sync: false
+      - key: GSC_PROPERTY_URL
+        sync: false
+      - key: GITHUB_USERNAME
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: FLASK_SECRET_KEY
+        generateValue: true
