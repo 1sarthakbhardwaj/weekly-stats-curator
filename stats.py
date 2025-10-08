@@ -13,7 +13,8 @@ import logging
 from collectors import (
     RedditCollector,
     YouTubeCollector,
-    GSCCollector
+    GSCCollector,
+    GitHubCollector
 )
 
 # Load environment variables
@@ -132,6 +133,40 @@ def collect_stats(platforms=None, days=7):
                 'error': 'API not configured'
             }
     
+    # GitHub
+    if not platforms or 'github' in platforms:
+        github_username = os.getenv('GITHUB_USERNAME')
+        github_token = os.getenv('GITHUB_TOKEN')  # Optional, but recommended for higher rate limits
+        if github_username and github_username.strip():
+            try:
+                collector = GitHubCollector(github_username, github_token)
+                results['platforms']['github'] = collector.collect(start_date, end_date)
+            except Exception as e:
+                logger.error(f"GitHub collection failed: {e}")
+                results['platforms']['github'] = {
+                    'username': github_username,
+                    'public_repos': 0,
+                    'followers': 0,
+                    'following': 0,
+                    'total_stars': 0,
+                    'total_forks': 0,
+                    'commits_count': 0,
+                    'recent_activity': []
+                }
+        else:
+            # Show placeholder if not configured
+            results['platforms']['github'] = {
+                'username': '',
+                'public_repos': 0,
+                'followers': 0,
+                'following': 0,
+                'total_stars': 0,
+                'total_forks': 0,
+                'commits_count': 0,
+                'recent_activity': [],
+                'error': 'Username not configured'
+            }
+    
     return results
 
 
@@ -151,7 +186,7 @@ def index():
     
     return render_template('dashboard.html', 
                          stats=stats, 
-                         selected=selected if selected else ['reddit', 'youtube', 'gsc'],
+                         selected=selected if selected else ['reddit', 'youtube', 'gsc', 'github'],
                          days=days)
 
 

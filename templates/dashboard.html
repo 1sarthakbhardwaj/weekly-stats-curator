@@ -245,6 +245,10 @@
                     <input type="checkbox" name="platform" value="gsc" {% if 'gsc' in selected %}checked{% endif %}>
                     Google Search
                 </label>
+                <label>
+                    <input type="checkbox" name="platform" value="github" {% if 'github' in selected %}checked{% endif %}>
+                    GitHub
+                </label>
                 
                 <select name="days">
                     <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
@@ -420,6 +424,62 @@
                 </div>
                 {% else %}
                 <div class="no-data">No search console data or API not configured</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- GITHUB CARD -->
+            {% if 'github' in stats.platforms %}
+            <div class="stat-card">
+                <h2>🐙 GitHub</h2>
+                {% if stats.platforms.github.username and not stats.platforms.github.error %}
+                <div class="metrics">
+                    <div class="metric highlight-metric">
+                        <span class="metric-label">👤 Username</span>
+                        <span class="metric-value" style="font-size: 1.1rem;">{{ stats.platforms.github.username }}</span>
+                    </div>
+                    <div class="metric highlight-metric">
+                        <span class="metric-label">👥 Followers</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.github.followers) }}</span>
+                    </div>
+                    <div class="metric highlight-metric">
+                        <span class="metric-label">📦 Public Repos</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.github.public_repos) }}</span>
+                    </div>
+                    
+                    <div class="section-divider">📊 Stats for Selected Period</div>
+                    
+                    <div class="metric">
+                        <span class="metric-label">⭐ Total Stars</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.github.total_stars) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">🍴 Total Forks</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.github.total_forks) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">💻 Commits</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.github.commits_count) }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">👣 Following</span>
+                        <span class="metric-value">{{ "{:,}".format(stats.platforms.github.following) }}</span>
+                    </div>
+                </div>
+                
+                {% if stats.platforms.github.recent_activity %}
+                <div class="top-post-title" style="margin-top: 15px;">🔥 Recent Activity</div>
+                <div class="subreddit-list">
+                    {% for activity in stats.platforms.github.recent_activity[:5] %}
+                    <div class="subreddit-item">
+                        <span>{{ activity.type }}</span>
+                        <span style="font-size: 0.85rem;">{{ activity.repo.split('/')[-1] }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="no-data">No GitHub data or username not configured</div>
                 {% endif %}
             </div>
             {% endif %}
