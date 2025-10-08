@@ -210,14 +210,20 @@ def save_linkedin_stats():
 
 
 if __name__ == '__main__':
-    print("\n" + "="*60)
-    print("🚀 Social Media Stats Dashboard")
-    print("="*60)
-    print("\nStarting web server...")
-    print("Open your browser and go to: http://localhost:5050")
-    print("\nPress Ctrl+C to stop the server\n")
+    # Check if running in production or local
+    is_production = os.getenv('RENDER') or os.getenv('RAILWAY_ENVIRONMENT') or os.getenv('VERCEL')
+    
+    if not is_production:
+        print("\n" + "="*60)
+        print("🚀 Social Media Stats Dashboard")
+        print("="*60)
+        print("\nStarting web server...")
+        print("Open your browser and go to: http://localhost:5050")
+        print("\nPress Ctrl+C to stop the server\n")
     
     # Get port from environment variable (for deployment) or use 5050 for local
     port = int(os.getenv('PORT', 5050))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    debug_mode = not is_production
+    
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)
 
